@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/about/page.tsx", "component/vercel/index.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/about/page.tsx", "component/vercel/index.jsx", "app/api/git-clone/route.js"],
   "exclude": ["node_modules"]
 }

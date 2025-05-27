@@ -1,30 +1,26 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import simpleGit, { SimpleGit } from 'simple-git';
+// app/api/git-clone/route.ts
+import { NextResponse } from 'next/server';
+import simpleGit from 'simple-git';
 import fs from 'fs';
 import path from 'path';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { repoUrl, branch } = req.body;
-
-  // Validate input
-  if (!repoUrl) {
-    return res.status(400).json({ error: 'Repository URL is required' });
-  }
-
+export async function POST(request) {
   try {
+    const { repoUrl, branch } = await request.json();
+
+    // Validate input
+    if (!repoUrl) {
+      return NextResponse.json(
+        { error: 'Repository URL is required' },
+        { status: 400 }
+      );
+    }
+
     // Create a temporary directory in /tmp (writable in Vercel)
     const tempDir = path.join('/tmp', `clone-${Date.now()}`);
     fs.mkdirSync(tempDir);
 
-    const git: SimpleGit = simpleGit({
+    const git = simpleGit({
       baseDir: tempDir,
       maxConcurrentProcesses: 6,
       trimmed: false,
@@ -39,16 +35,19 @@ export default async function handler(
     // Clean up - delete the temporary directory
     fs.rmSync(tempDir, { recursive: true, force: true });
 
-    return res.status(200).json({
+    return NextResponse.json({
       success: true,
       message: 'Repository cloned successfully',
       files: files.filter(f => !f.startsWith('.')), // filter out hidden files
     });
   } catch (error) {
     console.error('Git clone error:', error);
-    return res.status(500).json({ 
-      error: 'Failed to clone repository',
-      details: error instanceof Error ? error.message : String(error)
-    });
+    return NextResponse.json(
+      { 
+        error: 'Failed to clone repository',
+        details: error instanceof Error ? error.message : String(error)
+      },
+      { status: 500 }
+    );
   }
 }
