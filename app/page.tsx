@@ -62,6 +62,27 @@ export default function UserInput() {
     }
   };
 
+
+  const cloneRepo = async () => {
+  try {
+    const response = await fetch('/api/git-clone', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        repoUrl: 'https://github.com/raktimproloy/rebuild-2.git',
+        branch: 'main' // optional
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="flex flex-row space-x-2 mb-4">
@@ -87,7 +108,7 @@ export default function UserInput() {
       <pre className="bg-white text-black p-4 rounded-lg border w-full max-w-4xl h-96 overflow-y-auto whitespace-pre-wrap">
         {output || 'Output will appear here...'}
       </pre>
-
+          <button onClick={() => cloneRepo()}>Clone</button>
       <Vercel/>
     </div>
   );
