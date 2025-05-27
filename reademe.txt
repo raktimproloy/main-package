@@ -1,0 +1,4 @@
+pm2 start ecosystem.config.js
+
+yarn install --modules-folder ../../node_modules
+cd app/about && git clone https://github.com/raktimproloy/rebuild-2.git . && yarn install --modules-folder ../../node_modules && cd ../../ && yarn build && pm2 restart next-app
